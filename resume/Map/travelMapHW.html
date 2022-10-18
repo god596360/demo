@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/leaflet.css">
+    <link rel="stylesheet" href="css/MarkerCluster.css">
+    <title>旅遊地圖-travelMap實作</title>
+    <style>
+      #mylist{
+        overflow: scroll;
+        color: rgb(90, 120, 150);
+        height: 73vh;
+      }
+      .marker-cluster-small{
+        background-color: rgba(123, 26, 96, .5);
+      }
+
+      .marker-cluster-small div{
+        background-color: rgba(156, 56, 196, .7);
+      }
+
+      .marker-cluster-medium{
+        background-color: rgba(23, 26, 200, .5);
+      }
+
+      .marker-cluster-medium div{
+        background-color: rgba(83, 86, 140, .7);
+      }
+
+      .marker-cluster div{
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        text-align: center;
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: 5px;
+        margin-left: 5px;
+      }
+      .marker-cluster span{
+        line-height: 30px;
+      }
+      h2{
+          color: #789;
+      }
+      #myCity01{
+        color: #8b84a2;
+      }
+      #myCity02{
+        color: #8b84a2;
+      }
+      .a2{
+        color: rgb(90, 120, 150);
+      }
+      .a3{
+          background-color: #f1eff5;
+        
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+    	<div class="row" style="height: 100vh;">
+            
+    		<div class="col-md-3" style="background-color: rgb(215, 215, 228);">
+                <p>
+                <center><h2>今天去哪兒</h2></center>
+  				<select class="custom-select custom-select-lg my-3" id="myCity01">
+  				  <option selected disabled>----縣市----</option>
+  				  <option value="台中市">台中市</option>
+  				  <option value="南投市">南投市</option>
+  				  <option value="彰化縣">彰化縣</option>
+  				</select>
+  				<select class="custom-select custom-select-lg mb-3" id="myCity02">
+  				  <option selected disabled>----鄉鎮區----</option>
+  				  <option value="西屯區">西屯區</option>
+  				  <option value="南屯區">南屯區</option>
+  				  <option value="太平區">太平區</option>
+  				</select>
+          <ul class="list-group" id="mylist">
+            <li class="list-group-item">            
+              <img src="https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=3A0q7AXcHWbPKAfchyD_QA&cb_client=search.gws-prod.gps&w=308&h=240&yaw=351.96234&pitch=0&thumbfov=100" class="img-fluid">
+              <p>  
+              <h4>XXX</h4>
+              <h5>地址: XXXXXX</h5>
+              <h5>電話: XXXXXXXX</h5>           
+            </li>
+          </ul>  
+    	  </div>
+    		<div class="col-md-9" style="background-color: #bbbbd3;">
+          <div id="map" style="height: 100vh;"></div>  
+        </div>
+    	</div>
+    </div>
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+    <script src="js/AllData.js"></script>
+    <script src="js/leaflet.js"></script>
+    <script src="js/leaflet.markercluster.js"></script>
+    <script src="js/leaflet-color-markers.js"></script>
+    
+    <script>
+      var mydata = []; //儲存旅遊景點資料
+    	var selectCity; //儲存選取的縣市名稱
+      var selectTown; //儲存選取的鄉鎮區名稱
+    	var selectCounty = []; //儲存選取縣市的鄉鎮區名稱
+      var map;
+    	$(function(){
+    		console.log(city);
+
+        //產生地圖
+        map = L.map('map').setView([24.1705382, 120.6079343], 16);   // 經緯度 + 倍率
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+
+        var markers = new L.markerClusterGroup().addTo(map);
+    	
+        //要求存取自己位置資訊的權限
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(function(position) {
+						var curLat = position.coords.latitude;
+						var curLng = position.coords.longitude;
+						map.panTo([curLat, curLng]);
+						L.marker([curLat, curLng], {icon: ReindeerIcon}).addTo(map).bindPopup("<h3><p>挖抵加啦!</p></h3>").openPopup();
+						//console.log("Lat" + curLat + " Lng" + curLng);
+				});
+			} else {
+				alert("瀏覽器不給力 請再多重整畫面看看");
+			}    
+
+        //載入旅遊景點資料
+        $.ajax({
+          type: "GET",
+          url: "js/travel.json",
+          dataType: "json",
+          success: function(data){  //只有兩三行的話就能這樣簡單寫error & success function 不用再特地獨立出來寫
+             mydata = data
+            // console.log(data );
+            // console.log(mydata);          
+          },
+          error: function(){
+            alert("error-js/travel.json");
+          }
+        });
+
+        //渲染縣市名稱選單
+    		$("#myCity01").empty();
+    		$("#myCity01").append('<option selected disabled>----縣市----</option>');
+    		city.forEach(function(item){  //透過foreach的方式把CityName的每筆資料都跑一次 每一筆資料跑完取名為item
+    			//console.log(item.CityName);
+                //console.log(item.AreaList);
+    			var strHTML = '<option value="'+item.CityName+'">'+item.CityName+'</option>';
+    			$("#myCity01").append(strHTML);
+    		});
+
+        //監聽縣市選單是否有被選取
+    		$("#myCity01").change(function(){
+
+          //紀錄縣市名稱
+    			selectCity = $(this).val();
+          //console.log(selectCity);
+          
+
+          //撈取該縣市名稱的鄉鎮區資料
+    			city.find(function(item){
+    				if(item.CityName == selectCity){
+    					selectCounty = item.AreaList;
+                        //console.log(item.AreaList);
+    				}
+    			});
+    			//console.log(selectCounty);
+    			//渲染鄉鎮區名稱
+    			$("#myCity02").empty();
+    			$("#myCity02").append('<option selected disabled>----鄉鎮區----</option>');
+    			selectCounty.forEach(function(item){
+                    //console.log(item.AreaName);
+    				var strHTML = '<option value="'+item.AreaName+'">'+item.AreaName+'</option>';
+    				$("#myCity02").append(strHTML);
+                    //console.log(item.AreaName);
+    			});
+    		});
+
+        //監聽鄉鎮區選單是否有被選取
+        $("#myCity02").change(function(){
+          selectTown = $(this).val();
+          //console.log(selectTown);
+
+          //依照所選取的縣市與鄉鎮區名稱, 對健保局藥局資料撈取
+          var listData = []; //儲存撈取過濾後的藥局資料
+          mydata.forEach(function(item){  
+                
+            if(item.Region == selectCity && item.Town == selectTown){
+              listData.push(item);
+              //console.log(item);
+            } 
+          });
+          //console.log(listData);
+
+          $("#mylist").empty(); //前一個選項清空後
+          removeMarker();  //地圖上的小水滴也要清空
+          listData.forEach(function(item, key){
+            //console.log(key);
+            
+            //如果住址跟照片 是null 或是 ""時 就顯示其他資訊給人看
+            if(item.Add == null || item.Add == ""){
+			      	  item.Add = "資料下次更新 敬請期待";
+			      }else if(item.Picture1 == null || item.Picture1 == ""){
+                item.Picture1 = "https://images.unsplash.com/photo-1663417026017-dd3933e19074?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=772&q=80";
+            }
+
+            var lng = item.Px; //經度
+            var lat = item.Py; //緯度
+            //console.log(item.Px[1]);
+            //產生list-group 再把資訊藏入list-group裡面
+            var strHTML = 
+            '<li class="list-group-item" data-pic="'
+            +item.Picture1+'" data-name="'
+            +item.Name+'" data-addr="'
+            +item.Add+'" data-tel="'
+            +item.Tel+'" data-picture="'
+            +item.Picture1+'"data-tcket="'
+            +item.Ticketinfo+'" data-lat="'
+            +lat+'" data-lng="'
+            +lng+'" ><h5>'+item.Name+'</h5><h7>地址:'+item.Add+'</h7><p><h7>電話: '+item.Tel+'</h7></li>';
+            $("#mylist").append(strHTML);
+
+
+
+            //產生地圖座標圖式(小水滴)
+            var markerHTML =    
+            '<div class="card"><div class="card-body"><h5 class="card-title">'
+            '<img src ="'
+            +item.Picture1+'"><p> '
+            +item.Name+'</h5><p class="card-text "><h7>地址: '
+            +item.Add+'</p><p class="card-text ">電話: '
+            +item.Tel+'</p></h7></div></div>'; 
+            
+            
+            
+            markers.addLayer(L.marker([lat, lng],{icon: mapicon2Icon}).bindPopup(markerHTML));
+            
+            //移動到地圖搜尋排序的中心點
+            //console.log(listData.length);
+            if(listData.length == 1){ //如果只有一間的話
+              map.panTo([lat, lng]);  //就直接跑去那個座標位置
+            }else if(listData.length != 1 && key == Math.round(listData.length/2)){  
+            //Math.round()無條件進位 
+              map.panTo([lat,lng]);
+            } 
+          });
+
+
+          //監聽#mylist  list-group-item click事件
+          $("#mylist .list-group-item").click(function(){
+            
+            // console.log($(this).data("name")); //確認點擊後是否有顯示出name
+            // console.log($(this).data("addr"));
+            // console.log($(this).data("tel"));
+            // console.log($(this).data("ticket"));
+            // console.log($(this).data("mask_child"));
+            // console.log($(this).data("lat"));
+            // console.log($(this).data("lng"));
+            markerPopup($(this).data("pic"),$(this).data("name"),$(this).data("addr"),$(this).data("tel"),$(this).data("ticket"),$(this).data("lat"),$(this).data("lng"))
+            
+          });
+
+        });
+    	});
+
+      function removeMarker(){
+        map.eachLayer(function(layer){  //地圖上針對每一層圖層
+          if(layer instanceof L.Marker){ //判斷圖層上有無小水滴
+            map.removeLayer(layer);
+            
+          }
+        
+        });
+      }
+
+      function markerPopup( pic, name, addr, tel, ticket, lat, lng){
+        // console.log("markerPopup" + name);
+        // console.log("markerPopup" + addr);
+        // console.log("markerPopup" + tel);
+        // console.log("markerPopup" + ticket);
+        // console.log("markerPopup" + lat);
+        // console.log("markerPopup" + lng);
+
+          //從產生地圖座標圖式(小水滴)那邊複製過來 再把.openPopup()加上 就能跳出Popup訊息了 要記得檢查帶過來的名稱是否正確
+          var markerHTML =    
+            '<div class="card a2"><div class="card-body a3"><img src='
+                +pic+' class="img-fluid"><p><h5 class="card-title">'
+            +name+'</h5><p class="card-text h5">地址: '
+            +addr+'</p><p class="card-text h5">電話: '
+            +tel+'</p></div></div>';    
+          L.marker([lat, lng]).addTo(map).bindPopup(markerHTML).openPopup(); 
+              
+    }  
+    </script>
+  </body>
+</html>
+
+<!-- <div class="card">
+  <div class="card-body">
+    <h5 class="card-title">XXX藥局</h5>
+    <p class="card-text h5">地址: XXXXXX</p>
+    <p class="card-text h5">電話: XXXXXXXX</p>
+    <h5>成人口罩<span class="h3 font-weight-bolder text-danger">50</span>個</h5>
+    <h5>兒童口罩<span class="h3 font-weight-bolder text-warning">50</span>個</h5>
+  </div>
+</div>
+
+<li class="list-group-item">
+  <h4>XXX藥局</h4>
+  <h5>地址: XXXXXX</h5>
+  <h5>電話: XXXXXXXX</h5>
+  <h5>成人口罩<span class="h3 font-weight-bolder text-danger">50</span>個</h5>
+  <h5>兒童口罩<span class="h3 font-weight-bolder text-warning">50</span>個</h5>
+</li> -->

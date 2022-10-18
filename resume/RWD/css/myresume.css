@@ -1,0 +1,163 @@
+.box {
+    width: 200px;
+    height: 200px;
+    background: url(../resume_img/me.jpg);
+    background-size: 100%;
+    border-radius: 180px;
+    border: 4px solid #fff;
+}
+.underline {
+    position: absolute;
+    z-index: 1;
+    opacity: 0.5;
+    margin-top: 19vw;
+    height: 6vw;
+    width: auto;
+}
+
+.box1 {
+    width: 425px;
+    height: 230px;
+    border: #9096c3 4px solid;
+    margin-left: 66.5vw;
+    margin-top: -2.5vw;
+
+}
+
+.rectangle {
+    width: 70vw;
+    margin-left: 2vw;
+    height: auto;
+    background-color: rgb(88, 92, 118);
+}
+
+.project {
+    width: 70vw;
+    margin-left: 2vw;
+    margin-top: 2vw;
+}
+
+#me p {
+    border-left: rgb(137, 141, 168) 3pt solid;
+    padding-left: 1vw;
+    margin-left: 1.5vw;
+    
+}
+
+#me {
+    margin-left: 12.5vw;
+}
+
+.resume {
+    transform: rotate(90deg);     
+    position: absolute;
+    margin-top: 1vw;
+    top: 35vw;
+    left: 10vw;
+    height: 15vw;
+    z-index: -1;
+}
+
+/* owl輪播功能 */
+.owl-theme .item {
+    height: 15.7rem;
+    background: #4dc7a0;
+    
+}
+.owl-carousel .item h4 {
+    color: #fff;
+    font-weight: 400;
+    font-size: 1.4375rem;
+    margin-top: 0rem;
+}       
+
+/* 橫線色塊 */
+.gradient {
+    position: absolute;
+    top: 54vw;
+    left: 6vw;
+    width: 90vw;
+    z-index: -2;
+}
+
+/* 直線色塊 */
+.gradient2 {
+    position: absolute;
+    top: 47vw;
+    left: 5vw;
+    width: 7.8vw;
+    z-index: -2;
+}
+
+/* 圖片重播 */
+.banner {
+    content: '';
+    position: absolute;
+    left: 2vw;
+    height: 2vw;
+    margin-top: -2vw;  
+    width: 64.5vw;
+    background: url(../resume_img/sea.png);
+    z-index: 1;
+    background-repeat: repeat-x;
+    animation: 100s linear 0s infinite normal none running slides;
+}
+.banner {
+    background-color: #585C76;
+    height: 2vw;
+    opacity: 0.5;
+    z-index: 1;
+}
+
+@keyframes slides {
+    from {
+        background-position:    0 0;
+    }
+
+    to {
+        background-position: 3000px 0;
+    }
+}
+
+/* 時間線 */
+.timeline-section {
+    position: relative;
+}
+
+.timeline-section:before {
+    position: absolute;
+    content: "";
+    top: 0px;
+    bottom: 0;
+    width: 5px;
+    background-color: rgba(230, 121, 32, 0.1);
+    left: 2.5vw;
+    transform: translateX(50%);
+}
+
+.timeline-pointer {
+    position: relative;
+}
+
+.timeline-pointer:before {
+    position: absolute;
+    content: "";
+    top: -5px;
+    width: 15px;
+    height: 15px;
+    background-color: #fff;
+    border-radius: 50%;
+    /* 把正方形變成圓形 */
+    right: 95.8%;
+    /* 整個頁面的中間位置50% */
+    transform: translateX(50%);
+    /* 向右邊微調位置50% */
+    border: 3px solid #aaa;
+}
+
+.timeline-pointer:hover:before {
+    /* hover滑鼠移過去會對before產生什麼反應 */
+    width: 20px;
+    height: 20px;
+    border: 4px solid #F5DEB3;
+}

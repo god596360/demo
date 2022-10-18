@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>控制台</title>
+	<link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+	<script src="js/jquery-2.1.0.min.js"></script>
+	<script src="js/jquery.mobile-1.4.5.min.js"></script>
+	<script>
+		var flag_pname = true;
+		var flag_premark = true;
+		var u_id; //for更新用
+		$(function(){
+			$.ajax({
+				type:"GET",
+				url: "20220621.select_db.php",
+				dataType:"json",
+				async:false,   //不加的話刪除按鈕會沒反應
+				success: showdata,
+				error:function(){
+					alert("error-20220621.select_db.php");
+				}
+			});
+
+
+			//delete_btn 按鈕監聽
+			$("#mybody #delete_btn").bind("click", function(){			//按下按刪除按鈕後 會發生的事件
+				if(confirm("確定刪除 ID: "+$(this).data("id") + "?")){   //點下按鈕後再次確認是否要刪除資料
+
+				console.log($(this).data("id"));
+				//console.log("hello");
+				var jsonData ={};
+				jsonData["ID"] = $(this).data("id");
+
+				//{"ID": "10"}
+				console.log(JSON.stringify(jsonData));
+
+				$.ajax({
+					type: "POST",
+					url: "20220628.delete_db.php",
+					data: JSON.stringify(jsonData),
+					dataType: "json",
+					success: showdata_del,
+					error: function(){
+						alert("error-20220628-delete_db.php");
+						}
+
+					});
+				}
+			});
+			//update_btn 按鈕監聽
+			$("#mybody #update_btn").bind("click", function(){
+				console.log($(this).data("id"));
+				console.log($(this).data("pname"));
+				console.log($(this).data("pnum"));
+				console.log($(this).data("premark"));
+				console.log($(this).data("created_at"));
+
+			//轉換到產品更新的頁面
+			$.mobile.changePage( "#update", { transition: "slideup", changeHash: false }); //連接到update的頁面
+
+			//更新產品頁面的相關欄位
+			u_id = $(this).data("id");
+			$("#pname").val($(this).data("pname"));
+			$("#pnum").val($(this).data("pnum"));
+			$("#premark").val($(this).data("premark"));
+			});
+
+
+			//pname即時監聽
+			$("#pname").bind("input propertychange",function(){
+				console.log($(this).val().length);
+				if($(this).val().length > 1 && $(this).val().length< 11){
+					$("#err_pname").html("輸入格式正確!");
+					$("#err_pname").css("color", "green");
+					flag_pname = true;	
+				}else{
+					$("#err_pname").html("輸入格式錯誤!");
+					$("#err_pname").css("color", "red");
+					flag_pname = false;	
+				}
+			});		
+
+			//premark即時監聽
+			$("#premark").bind("input propertychange",function(){
+				console.log($("#premark").val().length);
+				if($("#premark").val().length > 1 && $("#premark").val().length< 11){
+					$("#err_premark").html("輸入格式正確!");
+					$("#err_premark").css("color", "green");
+					flag_premark = true;	
+				}else{
+					$("#err_premark").html("輸入格式錯誤!");
+					$("#err_premark").css("color", "red");
+					flag_premark = false;	
+				}
+			});	
+
+			//ok_btn_update 按鈕監聽
+			$("#ok_btn_update").bind("click", function(){
+				if(flag_pname && flag_premark){
+					//執行更新行為 
+					//{"pname":"咖啡13","pnum":"10","premark":"咖啡13咖啡13", "ID": "10"}
+					console.log(u_id);
+					console.log($("#pname").val());
+					console.log($("#pnum").val());
+					console.log($("#premark").val());
+					//將四筆參數傳遞到後端 update api 執行更新行為
+					var jsonData_U = {};
+					jsonData_U["ID"] = u_id;
+					jsonData_U["pname"] = $("#pname").val();
+					jsonData_U["pnum"] = $("#pnum").val();
+					jsonData_U["premark"] = $("#premark").val();
+
+					console.log(JSON.stringify(jsonData_U));
+					$.ajax({
+						type: "POST",
+						url: "20220628.update_db.php",
+						data: JSON.stringify(jsonData_U),
+						dataType: "json",
+						success:showdata_update,
+						error: function(){
+							alert("error-20220628.update_db.php");
+						}
+					});
+
+				}else{
+					alert("欄位錯誤, 請修正!");
+				}
+			});
+		});
+		function showdata(data){
+			console.log(data);
+			$("#mybody").empty();
+			for(var i=0; i<data.length ; i++){
+				var strHTML = '<tr><td>'+data[i].ID+'</td><td>'+data[i].P_name+'</td><td>'+data[i].P_num+'</td><td>'+data[i].P_remark+'</td><td>'+data[i].P_created_at+'</td><td><button id="update_btn" data-id="'+data[i].ID+'" data-pname="'+data[i].P_name+'" data-pnum="'+data[i].P_num+'" data-premark="'+data[i].P_remark+'" data-created_at="'+data[i].P_created_at+'">更新</button><button id="delete_btn" data-id="'+data[i].ID+'">刪除</button></td></tr>'; 
+				$("#mybody").append(strHTML);
+			}
+		}
+		function showdata_del(data){
+			console.log(data);
+			if(data.state){
+				alert(data.message);
+				//重整畫面F5
+				location.href = "20220628-control_panel.html";
+			}else{
+				alert(data.message);
+			}
+		}
+		function showdata_update(data){
+			console.log(data);
+			if(data.state){
+				alert(data.message);
+				//重整畫面F5
+				location.href = "20220628-control_panel.html";
+			}else{
+				alert(data.message);
+			}
+		}
+	</script>
+</head>
+<body>
+	<!--控制台-->
+	<div data-role="page" id="home">
+		<div data-role="header" id=home data-theme="b"> 
+			<h1>控制台</h1>
+		</div>
+		<div role="main" class="ui-content">
+				<table data-role="table" class="ui-responsive table-stroke">
+						<thead>
+							<tr>
+								<th>編號</th>
+								<th>品名</th>
+								<th>數量</th>
+								<th>備註</th>
+								<th>建立時間</th>
+								<th>#</th>
+							</tr>
+						</thead>
+						<tbody id="mybody">
+							<tr>
+								<td>1</td>
+								<td>好吃泡麵</td>
+								<td>10</td>
+								<td>哈囉你好嗎</td>
+								<td>1234</td>
+								<td>
+									<button id="update_btn">更新</button>
+									<button id="delete_btn" data-id="99">刪除</button>
+								</td>
+							</tr>
+						</tbody>
+				</table>			
+		</div>	
+		<div data-role="footer" data-position="fixed" data-theme="b">
+			<h1>頁尾</h1>			
+		</div>		
+	</div>
+
+	<!--產品更新-->
+	<div data-role="page"id="update">
+		<div data-role="header" data-theme="b"> 
+			<h1>產品更新</h1>
+		</div>
+		<div role="main" class="ui-content">
+						<div data-role="fieldcontain">
+					<label for="pname">產品名稱</label>
+					<input type="text" id ="pname" name = "pname">
+				</div>
+				<div id="err_pname"></div>
+
+				<div data-role="fieldcontain">
+					<label for="pnum">產品數量</label>
+					<input type="range" id ="pnum" name = "pnum" max= "100" min="1" step="1" value="10">
+				</div>
+				<div data-role="fieldcontain">
+					<label for="premark">備註</label>
+					<textarea name="premark" id="premark" cols="30" rows="10" placeholder="字數2~10之間"></textarea>
+				</div>
+				<div id="err_premark"></div>
+
+				<div class="ui-grid-a">
+				<div class="ui-block-a">
+					<a href="#home" data-role="button" data-theme="a" data-icon="delete">取消</a>
+				</div>
+				<div class="ui-block-b">
+					<a href="#" data-role="button" data-theme="b" data-icon="check" id="ok_btn_update">確認更新</a>
+				</div>
+			</div>			
+			
+		</div>			
+		</div>	
+		<div data-role="footer" data-position="fixed" data-theme="b">
+			<h1>頁尾</h1>			
+		</div>		
+	</div>
+</body>
+</html>
