@@ -51,10 +51,10 @@
 .resume {
     transform: rotate(90deg);     
     position: absolute;
-    margin-top: 1vw;
+    margin-top: 5.1vw;
     top: 35vw;
     left: 10vw;
-    height: 15vw;
+    height: 26.5vw;
     z-index: -1;
 }
 
