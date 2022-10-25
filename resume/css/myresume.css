@@ -21,7 +21,6 @@
     border: #9096c3 4px solid;
     margin-left: 66.5vw;
     margin-top: -2.5vw;
-
 }
 
 .rectangle {
@@ -29,6 +28,11 @@
     margin-left: 2vw;
     height: auto;
     background-color: rgb(88, 92, 118);
+}
+
+.top h4 {
+    margin-left: 7vw;
+    margin-top: 1vw;
 }
 
 .project {
@@ -39,9 +43,8 @@
 
 #me p {
     border-left: rgb(137, 141, 168) 3pt solid;
-    padding-left: 1vw;
-    margin-left: 1.5vw;
-    
+    padding-left: 2vw;
+    margin-left: 1.5vw;   
 }
 
 #me {
@@ -53,28 +56,16 @@
     position: absolute;
     margin-top: 5.1vw;
     top: 35vw;
-    left: vw;
     height: 26.5vw;
     z-index: -1;
 }
 
-/* owl輪播功能 */
-.owl-theme .item {
-    height: 15.7rem;
-    background: #4dc7a0;
-    
-}
-.owl-carousel .item h4 {
-    color: #fff;
-    font-weight: 400;
-    font-size: 1.4375rem;
-    margin-top: 0rem;
-}       
+   
 
 /* 橫線色塊 */
 .gradient {
     position: absolute;
-    top: 54vw;
+    top: 46vw;
     left: 6vw;
     width: 90vw;
     z-index: -2;
@@ -83,7 +74,7 @@
 /* 直線色塊 */
 .gradient2 {
     position: absolute;
-    top: 47vw;
+    top: 43vw;
     left: 5vw;
     width: 7.8vw;
     z-index: -2;
@@ -160,4 +151,120 @@
     width: 20px;
     height: 20px;
     border: 4px solid #F5DEB3;
+}
+
+/* 4k畫面 螢幕2560寬以上都套用 */
+@media screen and (min-width: 2559px){
+
+    .rectangle {
+        height: 37vw;
+    }
+/* 頭像 */    
+    .box {
+        width: 380px;
+        height: 380px;
+        margin-top: 6vw;
+    }
+    .introduce {
+        margin-top: 4vw;
+        width: 40vw;
+    }
+    .rectangle .mt-4 {
+        font-size: 1.5vw;
+        line-height: 3.5vw;          
+    }
+
+    .underline {
+        margin-top: 27vw;
+    }
+
+    .banner {
+        width: 59vw;
+        margin-top: -1.9vw;
+        height: 2vw;
+    }
+    .box1 {
+        width: 30vw;
+        height: 16vw;
+        margin-top: -3vw;
+        margin-left: 61vw; 
+    }
+    .top h4 {
+        font-size: 1.9vw;
+        margin-top: 1vw;
+        margin-left: 6.7vw;
+    }
+/* 橫線色塊 */
+    .gradient {
+        margin-top: 24vw;
+        width: 85vw;
+    }
+/* 直線色塊 */
+    .gradient2 {
+        top: 80vw;
+        left: 2vw;
+        width: 9vw;
+        z-index: -2;
+    }
+    .resume {
+        top: 65vw;
+        height: 29vw;
+    }
+/* 基本資料的線 */    
+    #me p {
+        margin-left: 4vw;         
+    }
+
+    #me h4 {
+        font-size: 3vw;
+        margin-top: 6vw;
+    }
+
+    #me p {
+        font-size: 2vw;
+    }
+
+    .time h3 {
+        font-size: 2.3vw;
+    }
+    .time h4 {
+        margin-top: 2vw;
+        margin-bottom: 3vw;
+        font-size: 3vw;
+    }
+    .time h5 {
+        font-size: 2vw;
+    }
+
+    .time li {
+        font-size: 1.7vw;
+    }
+
+    .timeline-section:before {
+        width: 9px;
+        left: 2.5vw;
+    }
+    .timeline-pointer:hover:before {
+        /* hover滑鼠移過去會對before產生什麼反應 */
+        width: 40px;
+        height: 40px;
+        border: 4px solid #F5DEB3;
+    }
+/* 個人自傳 */ 
+    #story .ml-5 {
+        font-size: 3vw;
+    }
+    #story .storygo {
+        font-size: 2vw;
+    }
+    /* owl輪播功能 */
+    .owl-theme .item {
+        height: 15.7rem;
+        background: #4dc7a0;
+        width: 40rem;
+        margin-left: 3vw;
+    }    
+    .footer h6 {
+        font-size: 1.5vw;
+    }
 }
